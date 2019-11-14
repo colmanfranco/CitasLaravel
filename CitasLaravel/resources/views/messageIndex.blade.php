@@ -1,59 +1,77 @@
 @extends('layouts.app')
 
 @section('content')
-<div style="display: flex;justify-content: center; padding: 10px;">
-    <h1>Appointment List</h1>
-</div>
+<div class="container">
+    <div class="flex-row">
+        <div class="col-xs-1-12">
+            <h1 class="title">Appointment List</h1>
 @if ($messages->all() == null)
-    <h1>No Appointments in queue</h1>
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    <h1><strong> No Appointments in queue</strong></h1>
+</div>
 @endif
 @cannot('view', Message::class)
-<div style="display: flex;flex-direction: column;justify-content: space-evenly;">
     @foreach ($messages as $message)
-        <div style="display: flex; flex-direction: row;justify-content: space-evenly;">
-            {{ csrf_field() }}
+    <div class="card-columns">
+        <div class="card">
+             {{ csrf_field() }}
             <div>
-                <p><strong>Name:</strong> {{$message->username}}</p>
-                <p><strong>Subject:</strong> {{$message->subject}}</p>
-                <p><strong>Trainer:</strong> {{$message->requested_to}}</p>
-                <p><strong>Time:</strong> {{$message->created_at}}</p>
-                <p>--------------------------</p>
-            </div>
-            <div style="display: flex;flex-direction: column;justify-content: space-around;height: 130px;">
-                <div>
-                    @can('update', $message)
-                        <form method="get" action="/message/{{$message->id}}/edit">
-                            <button class="btn btn-secondary" type="submit">Edit</button>
-                        </form> 
-                    @endcan
+                    <div class="card-body">
+                        <h5 class="card-title">{{$message->subject}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted"><strong>Requested By:</strong>{{$message->username}}</h6>
+                        <h6><strong>Trainer:</strong> {{$message->requested_to}}</p></h6>
+                        <h6 class="card-subtitle mb-2 text-muted"><strong>Requested at:</strong>{{$message->created_at}}</h6>
+                            <div class="card-columns">
+                                <div class="flex-row">
+                                    @can('update', $message)
+                                    <form method="get" action="/message/{{$message->id}}/edit">
+                                        <button class="btn btn-secondary" type="submit">Edit</button>
+                                    </form>
+                                    @endcan
+                                    @can('delete', $message)
+                                    <form action="/message/{{$message->id}}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                    </form>
+                                    @endcan
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    @can('delete', $message)
-                        <form action="/message/{{$message->id}}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                        <button class="btn btn-danger" type="submit">Delete</button>
+        </div>
+    </div>
+@endforeach
+    <div class="col-md-10 align-items-center">
+        b4
+        <a class="btn btn-primary" href="/message/create">
+        <button class="btn btn-primary">
+            Request Appointment
+        </button>
+        </a>
+            @can('deleteAll', $message)
+            <span>
+                    <form action="/all-messages" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger" >
+                            <a class="btn btn-danger" type="submit">Delete All Appointments</a>
+                        </button>
                     </form>
-                    @endcan
-                </div>
+            </span>
             </div>
         </div>
-    @endforeach
-</div>
-<div style="display: flex;flex-direction: row;justify-content: center;">
-    <div>
-        <a class="btn btn-primary" href="/message/create">Request Appointment</a>
+            @endcan
     </div>
-    @can('deleteAll', $message)
-    <div>
-        <form action="/all-messages" method="POST">
-            @csrf
-            @method('DELETE')
-        <button class="btn btn-danger" type="submit">Delete All Appointments</button>
-        </form>
     </div>
-    @endcan
 </div>
 @endcannot
+        </div>
+    </div>
 @endsection
 
