@@ -22,6 +22,7 @@ class MessageController extends Controller
 
     public function store(Request $request)
     {
+        $this->validationFunction($request);
         $request->merge(['user_id'=> auth()->id()]);
         Message::create($request->all());
         return redirect('/message');
@@ -58,5 +59,14 @@ class MessageController extends Controller
 
         Message::truncate();
         return view('home');
+    }
+
+    public function validationFunction(Request $request)
+    {
+        return $request->validate([
+            'username'=> 'required',
+            'subject'=> 'required',
+            'requested_to'=> 'required',
+        ]);
     }
 }
