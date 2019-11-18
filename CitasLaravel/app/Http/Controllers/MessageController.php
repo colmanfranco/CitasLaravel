@@ -61,7 +61,7 @@ class MessageController extends Controller
         return view('home');
     }
 
-    public function validationFunction(Request $request)
+    private function validationFunction(Request $request)
     {
         return $request->validate([
             'username'=> 'required',
